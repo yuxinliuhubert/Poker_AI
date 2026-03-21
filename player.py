@@ -78,46 +78,82 @@ class HumanPlayer(Player):
                 return "call", amount
             
             elif action == 'r':
-                # Raising logic
                 try:
-                    raise_amount = int(input(f"Raise amount (min {game_state['min_raise']}): "))
-                    total_bet = to_call + raise_amount
-                    if total_bet > self.stack:
-                        print("You don't have enough chips!")
+                    # NEW LOGIC: We ask for the TOTAL amount you want to have in front of you
+                    total_target = int(input(f"New total bet (must be at least {game_state['current_bet'] + game_state['min_raise']}): "))
+                    
+                    # Calculate how much EXTRA you need to put in
+                    amount_to_add = total_target - self.current_bet
+                    
+                    if total_target < game_state['current_bet'] + game_state['min_raise']:
+                        print(f"Raise must be at least ${game_state['current_bet'] + game_state['min_raise']} total.")
                         continue
                         
-                    self.bet(total_bet)
-                    return "raise", total_bet
+                    if amount_to_add > self.stack:
+                        print(f"You only have ${self.stack} left! Try a smaller amount or go all-in.")
+                        continue
+                        
+                    self.bet(amount_to_add)
+                    return "raise", amount_to_add
                 except ValueError:
                     print("Invalid number.")
 
 import random
 
+import random
+
 class BotPlayer(Player):
+    def __init__(self, name, stack=1000, evaluator=None):
+        super().__init__(name, stack)
+        self.evaluator = evaluator 
+        self.last_thought = ""     
+
     def get_action(self, game_state):
         to_call = game_state['current_bet'] - self.current_bet
+        active_players = game_state.get('active_players', 2)
         
-        # --- SIMPLE AI LOGIC PLACEHOLDER ---
-        # 1. If it costs nothing to check, just check.
-        if to_call == 0:
+        # 1. Calculate Pot Odds
+        total_pot_if_called = game_state['pot'] + to_call
+        pot_odds = to_call / total_pot_if_called if total_pot_if_called > 0 else 0
+
+        # 2. Ask the Evaluator for the Win Probability
+        if self.evaluator:
+            sim_results = self.evaluator.get_win_probability(
+                player_num=active_players, 
+                hole_cards=self.hand, 
+                community_cards=game_state['community_cards']
+            )
+            equity = sim_results['equity']
+        else:
+            equity = 0.5 # Fallback if no evaluator is hooked up
+
+        # 3. Formulate the Brutally Honest Thought Process
+        self.last_thought = (
+            f"[{self.name} Math] Pot Odds: {pot_odds:.1%} | Win Equity: {equity:.1%} "
+            f"| Diff: {(equity - pot_odds):.1%}"
+        )
+        print(self.last_thought) 
+
+        # 4. Make the Decision
+        if to_call == 0 and equity < 0.5:
             return "check", 0
-        
-        # 2. Randomly decide to fold, call, or raise
-        choice = random.choice(['fold', 'call', 'call', 'raise']) # biased towards calling
-        
-        if choice == 'fold':
-            self.status = "folded"
-            return "fold", 0
-        
-        elif choice == 'raise':
-            # Simple raise logic (min raise)
-            amount = to_call + game_state['min_raise']
-            if amount > self.stack:
-                 amount = self.stack # All in if short
-            self.bet(amount)
-            return "raise", amount
+
+        if equity > (pot_odds + 0.20): 
+            raise_amount = to_call + game_state['min_raise']
+            raise_amount += random.choice([0, game_state['min_raise'], game_state['min_raise'] * 2])
             
-        else: # Call
+            if raise_amount > self.stack:
+                 raise_amount = self.stack 
+            
+            self.bet(raise_amount)
+            return "raise", raise_amount
+            
+        elif equity >= pot_odds:
             amount = min(to_call, self.stack)
             self.bet(amount)
-            return "call", amount
+            verb = "call" if amount > 0 else "check"
+            return verb, amount
+            
+        else:
+            self.status = "folded"
+            return "fold", 0

@@ -1,0 +1,19 @@
+
+========================================
+HAND LOG
+========================================
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Hubert raiseed for $30.
+RandomBot called for $20.
+Board Updated: ['Qd', 'Jd', 'Td']
+Hubert raiseed for $100.
+RandomBot called for $100.
+Board Updated: ['Tc']
+Hubert called for $0.
+RandomBot checked for $0.
+Board Updated: ['Kh']
+Hubert called for $0.
+RandomBot checked for $0.
+WINNER: Hubert won $280.0 at Showdown.
+--------------------

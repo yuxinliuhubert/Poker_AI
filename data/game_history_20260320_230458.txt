@@ -1,0 +1,24 @@
+Poker Engine Session Started: 2026-03-20 23:04:58
+
+========================================
+HAND LOG
+========================================
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Jh', '5c']
+Dealt to RandomBot: ['6s', 'Qs']
+Hubert called for $10.
+RandomBot checked for $0.
+Board Updated: ['3h', '4c', '9d']
+Hubert called for $0.
+RandomBot checked for $0.
+Board Updated: ['9s']
+Hubert called for $0.
+RandomBot checked for $0.
+Board Updated: ['Jd']
+Hubert called for $0.
+RandomBot checked for $0.
+Hubert shows: ['Jh', '5c'] (Two Pair)
+RandomBot shows: ['6s', 'Qs'] (Pair)
+WINNER: Hubert won $40.0 at Showdown.
+--------------------

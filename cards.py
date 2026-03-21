@@ -49,6 +49,7 @@ class Card:
 # print(my_hand[0] == my_hand[1])
 
 
+
 import random
 class Deck:
     def __init__(self, seed=None):
@@ -73,8 +74,8 @@ class Deck:
         # modify the deck to discard the cards
         self.cards = self.cards[:-n]
 
-        if n == 1:
-            return dealt_cards[0]
+        # if n == 1:
+        #     return dealt_cards[0]
         
         return dealt_cards
     
