@@ -129,7 +129,7 @@ class BotPlayer(Player):
 
         # 3. Formulate the Thought Process
         self.last_thought = (
-            f"[{self.name} Math] Hand: {self.hand} | Pot Odds: {pot_odds:.1%} | Win Equity: {equity:.1%} "
+            f"[{self.name} Math] Pot Odds: {pot_odds:.1%} | Win Equity: {equity:.1%} "
             f"| Diff: {(equity - pot_odds):.1%} | # of sim: {sim_results["sims_run"]} | win: {sim_results["win"]} | tie: {sim_results["tie"]} | loss: {sim_results["loss"]}"
         )
         # print(self.last_thought) 
