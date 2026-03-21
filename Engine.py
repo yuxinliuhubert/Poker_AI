@@ -160,6 +160,12 @@ class TexasHoldem:
 
                 # 2. Ask the player for their move
                 action, amount_added = player.get_action(game_state)
+
+                if hasattr(player, 'last_thought') and player.last_thought:
+                    self.history.append({
+                        "action": "bot_thought", 
+                        "thought": player.last_thought
+                    })
                 
                 # 3. Process the move
                 if action == 'fold':
@@ -393,6 +399,10 @@ class TexasHoldem:
                 elif action in ['call', 'check', 'raise']:
                     f.write(f"{event['player']} {action}ed for ${event.get('amount', 0)}.\n")
                     
+                # Inside save_history_to_file loop:
+                elif action == 'bot_thought':
+                    f.write(f"  -> {event['thought']}\n")
+
                 # --- NEW: Write the shown hands ---
                 elif action == 'showdown_hand':
                     cards_str = [str(Card(c)) for c in event['cards']]
@@ -413,7 +423,7 @@ if __name__ == "__main__":
     # 2. Create the players
     # Right now, the bot is just using the random-action stub we left in Player.py
     human = HumanPlayer("Hubert", stack=1000)
-    bot = BotPlayer("RandomBot", stack=1000)
+    bot = BotPlayer("MathBot", stack=1000, evaluator=game.evaluator)
 
     # 3. Seat them at the table
     game.add_player(human)

@@ -1,0 +1,88 @@
+Poker Engine Session Started: 2026-03-20 23:33:17
+
+========================================
+HAND LOG
+========================================
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['9h', '8d']
+Dealt to MathBot: ['5d', '7h']
+  -> [MathBot Math] Hand: [13, 22] | Pot Odds: 25.0% | Win Equity: 42.2% | Diff: 17.2%
+MathBot called for $10.
+Hubert called for $0.
+Board Updated: ['3c', 'Kh', '7d']
+  -> [MathBot Math] Hand: [13, 22] | Pot Odds: 0.0% | Win Equity: 69.5% | Diff: 69.5%
+MathBot raiseed for $60.
+Hubert called for $60.
+Board Updated: ['2s']
+  -> [MathBot Math] Hand: [13, 22] | Pot Odds: 0.0% | Win Equity: 69.2% | Diff: 69.2%
+MathBot raiseed for $60.
+Hubert called for $60.
+Board Updated: ['Td']
+  -> [MathBot Math] Hand: [13, 22] | Pot Odds: 0.0% | Win Equity: 64.7% | Diff: 64.7%
+MathBot raiseed for $20.
+Hubert called for $20.
+Hubert shows: ['9h', '8d'] (High Card)
+MathBot shows: ['5d', '7h'] (Pair)
+WINNER: MathBot won $320.0 at Showdown.
+--------------------
+
+========================================
+HAND LOG
+========================================
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Qd', '6s']
+Dealt to MathBot: ['9s', '8s']
+  -> [MathBot Math] Hand: [31, 27] | Pot Odds: 25.0% | Win Equity: 51.5% | Diff: 26.5%
+MathBot raiseed for $70.
+Hubert called for $60.
+Board Updated: ['Td', '7c', '7d']
+  -> [MathBot Math] Hand: [31, 27] | Pot Odds: 0.0% | Win Equity: 48.2% | Diff: 48.2%
+MathBot checked for $0.
+Hubert raiseed for $100.
+  -> [MathBot Math] Hand: [31, 27] | Pot Odds: 27.8% | Win Equity: 47.1% | Diff: 19.4%
+MathBot called for $100.
+Board Updated: ['4h']
+  -> [MathBot Math] Hand: [31, 27] | Pot Odds: 0.0% | Win Equity: 39.3% | Diff: 39.3%
+MathBot checked for $0.
+Hubert called for $0.
+Board Updated: ['9c']
+  -> [MathBot Math] Hand: [31, 27] | Pot Odds: 0.0% | Win Equity: 67.1% | Diff: 67.1%
+MathBot raiseed for $40.
+Hubert called for $40.
+Hubert shows: ['Qd', '6s'] (Pair)
+MathBot shows: ['9s', '8s'] (Two Pair)
+WINNER: MathBot won $440.0 at Showdown.
+--------------------
+
+========================================
+HAND LOG
+========================================
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['4c', '3d']
+Dealt to MathBot: ['Qh', 'Th']
+Hubert called for $10.
+  -> [MathBot Math] Hand: [42, 34] | Pot Odds: 0.0% | Win Equity: 61.5% | Diff: 61.5%
+MathBot raiseed for $20.
+Hubert called for $20.
+Board Updated: ['5s', 'Qc', '9h']
+Hubert called for $0.
+  -> [MathBot Math] Hand: [42, 34] | Pot Odds: 0.0% | Win Equity: 84.7% | Diff: 84.7%
+MathBot raiseed for $20.
+Hubert called for $20.
+Board Updated: ['Td']
+Hubert raiseed for $500.
+  -> [MathBot Math] Hand: [42, 34] | Pot Odds: 44.6% | Win Equity: 90.5% | Diff: 45.8%
+MathBot raiseed for $540.
+Hubert called for $40.
+Board Updated: ['7d']
+Hubert called for $0.
+  -> [MathBot Math] Hand: [42, 34] | Pot Odds: 0.0% | Win Equity: 94.2% | Diff: 94.2%
+MathBot raiseed for $20.
+Hubert called for $20.
+Hubert shows: ['4c', '3d'] (High Card)
+MathBot shows: ['Qh', 'Th'] (Two Pair)
+WINNER: MathBot won $1240.0 at Showdown.
+--------------------

@@ -1,4 +1,6 @@
 from cards import Card
+import random
+
 class Player:
     def __init__(self, name, stack=1000):
         self.name = name
@@ -17,7 +19,7 @@ class Player:
         Moves chips from stack to current_bet.
         Returns the actual amount bet (handles all-in logic).
         """
-        if amount > self.stack:
+        if amount >= self.stack:
             amount = self.stack  # All-in
             self.status = "allin"
         
@@ -98,9 +100,7 @@ class HumanPlayer(Player):
                 except ValueError:
                     print("Invalid number.")
 
-import random
 
-import random
 
 class BotPlayer(Player):
     def __init__(self, name, stack=1000, evaluator=None):
@@ -127,12 +127,12 @@ class BotPlayer(Player):
         else:
             equity = 0.5 # Fallback if no evaluator is hooked up
 
-        # 3. Formulate the Brutally Honest Thought Process
+        # 3. Formulate the Thought Process
         self.last_thought = (
-            f"[{self.name} Math] Pot Odds: {pot_odds:.1%} | Win Equity: {equity:.1%} "
-            f"| Diff: {(equity - pot_odds):.1%}"
+            f"[{self.name} Math] Hand: {self.hand} | Pot Odds: {pot_odds:.1%} | Win Equity: {equity:.1%} "
+            f"| Diff: {(equity - pot_odds):.1%} | # of sim: {sim_results["sims_run"]} | win: {sim_results["win"]} | tie: {sim_results["tie"]} | loss: {sim_results["loss"]}"
         )
-        print(self.last_thought) 
+        # print(self.last_thought) 
 
         # 4. Make the Decision
         if to_call == 0 and equity < 0.5:
