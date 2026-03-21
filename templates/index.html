@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Poker AI Engine</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #2b3e50; color: white; text-align: center; padding: 50px; }
+        .card-box { background: #34495e; padding: 20px; border-radius: 10px; margin: 20px auto; width: 60%; }
+        h2 { color: #18bc9c; }
+        .btn { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; }
+        .btn-fold { background: #e74c3c; color: white; }
+        .btn-call { background: #f39c12; color: white; }
+        .btn-raise { background: #3498db; color: white; }
+        input[type="number"] { padding: 10px; font-size: 16px; width: 100px; }
+    </style>
+</head>
+<body>
+
+    <h1>Texas Hold'em vs MathBot</h1>
+    
+    <div class="card-box" id="board-box">
+        <h3>Community Cards</h3>
+        <h2 id="board">[]</h2>
+        <p>Pot: $<span id="pot">0</span></p>
+    </div>
+
+    <div class="card-box" id="player-box">
+        <h3>Your Hand</h3>
+        <h2 id="hand">[]</h2>
+        <p>Your Stack: $<span id="stack">0</span> | To Call: $<span id="tocall">0</span></p>
+    </div>
+
+    <div id="controls" style="display: none;">
+        <button class="btn btn-fold" onclick="sendAction('fold')">Fold</button>
+        <button class="btn btn-call" onclick="sendAction('call')">Call / Check</button>
+        <br><br>
+        <input type="number" id="raise-amount" placeholder="Total Bet">
+        <button class="btn btn-raise" onclick="sendRaise()">Raise To</button>
+    </div>
+
+    <h3 id="waiting-msg">Waiting for engine...</h3>
+
+    <script>
+        // Check the server every 1 second to see what's happening
+        setInterval(fetchState, 1000);
+
+        function fetchState() {
+            fetch('/get_state')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "waiting_for_user") {
+                        document.getElementById('board').innerText = data.board.join("  ");
+                        document.getElementById('hand').innerText = data.hand.join("  ");
+                        document.getElementById('pot').innerText = data.pot;
+                        document.getElementById('stack').innerText = data.stack;
+                        document.getElementById('tocall').innerText = data.to_call;
+                        
+                        document.getElementById('raise-amount').min = data.pot + data.min_raise;
+                        
+                        document.getElementById('controls').style.display = "block";
+                        document.getElementById('waiting-msg').style.display = "none";
+                    } else {
+                        document.getElementById('controls').style.display = "none";
+                        document.getElementById('waiting-msg').style.display = "block";
+                    }
+                });
+        }
+
+        function sendAction(actionType) {
+            document.getElementById('controls').style.display = "none";
+            fetch('/send_action', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: actionType, amount: 0 })
+            });
+        }
+
+        function sendRaise() {
+            let amount = parseInt(document.getElementById('raise-amount').value);
+            if (isNaN(amount)) { alert("Enter a valid number!"); return; }
+            
+            document.getElementById('controls').style.display = "none";
+            fetch('/send_action', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'raise', amount: amount })
+            });
+        }
+    </script>
+</body>
+</html>

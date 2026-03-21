@@ -1,5 +1,6 @@
 from cards import Card
 import random
+import queue
 
 class Player:
     def __init__(self, name, stack=1000):
@@ -55,10 +56,26 @@ class Player:
         hand_str = str([Card(c) for c in self.hand]) if self.hand else "[]"
         return f"{self.name} (${self.stack}): {hand_str}"
     
-
+# This is the mailbox between your Web UI and your Game Engine
+action_queue = queue.Queue()
+# This variable stores what the UI should display right now
+current_ui_state = {}
 class HumanPlayer(Player):
+
+    def __init__(self, name, stack=1000):
+        super().__init__(name, stack)
+        self.ui_enabled=False
+    
     def get_action(self, game_state):
+        if self.ui_enabled:
+            return self.get_action_ui(game_state=game_state)
+        else:
+            return self.get_action_command_line(game_state=game_state)
+
+
+    def get_action_command_line(self, game_state):
         # 1. Calculate how much you need to call
+        global current_ui_state
         to_call = game_state['current_bet'] - self.current_bet
         
         print(f"\n--- {self.name}'s Turn ---")
@@ -101,6 +118,48 @@ class HumanPlayer(Player):
                     print("Invalid number.")
 
 
+    def get_action_ui(self, game_state):
+        global current_ui_state
+        to_call = game_state['current_bet'] - self.current_bet
+        
+        # --- FIXED: Clear and Update the dictionary so app.py doesn't lose it ---
+        current_ui_state.clear()
+        current_ui_state.update({
+            "status": "waiting_for_user",
+            "name": self.name,
+            "hand": [str(Card(c)) for c in self.hand], 
+            "board": [str(Card(c)) for c in game_state['community_cards']],
+            "pot": game_state['pot'],
+            "to_call": to_call,
+            "stack": self.stack,
+            "min_raise": game_state['min_raise']
+        })
+        
+        print("Engine paused. Waiting for Web UI input...")
+        
+        # 2. Pause the game thread until the Web UI drops a message in the mailbox
+        ui_action = action_queue.get(block=True)
+        
+        # 3. Process the action that came from the browser
+        action_type = ui_action['action']
+        
+        if action_type == 'fold':
+            self.status = "folded"
+            return "fold", 0
+            
+        elif action_type == 'call':
+            amount = min(to_call, self.stack)
+            self.bet(amount)
+            return "call", amount
+            
+        elif action_type == 'raise':
+            # The browser will send the total amount in the message
+            total_target = ui_action['amount']
+            amount_to_add = total_target - self.current_bet
+            self.bet(amount_to_add)
+            return "raise", amount_to_add
+
+
 
 class BotPlayer(Player):
     def __init__(self, name, stack=1000, evaluator=None):
@@ -130,7 +189,7 @@ class BotPlayer(Player):
         # 3. Formulate the Thought Process
         self.last_thought = (
             f"[{self.name} Math] Pot Odds: {pot_odds:.1%} | Win Equity: {equity:.1%} "
-            f"| Diff: {(equity - pot_odds):.1%} | # of sim: {sim_results["sims_run"]} | win: {sim_results["win"]} | tie: {sim_results["tie"]} | loss: {sim_results["loss"]}"
+            f"| Diff: {(equity - pot_odds):.1%} | # of sim: {sim_results['sims_run']} | win: {sim_results['win']} | tie: {sim_results['tie']} | loss: {sim_results['loss']}"
         )
         # print(self.last_thought) 
 
