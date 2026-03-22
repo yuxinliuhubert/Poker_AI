@@ -60,11 +60,14 @@ class Player:
 action_queue = queue.Queue()
 # This variable stores what the UI should display right now
 current_ui_state = {}
+
+
 class HumanPlayer(Player):
 
     def __init__(self, name, stack=1000):
         super().__init__(name, stack)
         self.ui_enabled=False
+        self.trigger_ui_update = None
     
     def get_action(self, game_state):
         if self.ui_enabled:
@@ -119,28 +122,17 @@ class HumanPlayer(Player):
 
 
     def get_action_ui(self, game_state):
-        global current_ui_state
-        to_call = game_state['current_bet'] - self.current_bet
         
-        # --- FIXED: Clear and Update the dictionary so app.py doesn't lose it ---
-        current_ui_state.clear()
-        current_ui_state.update({
-            "status": "waiting_for_user",
-            "name": self.name,
-            "hand": [str(Card(c)) for c in self.hand], 
-            "board": [str(Card(c)) for c in game_state['community_cards']],
-            "pot": game_state['pot'],
-            "to_call": to_call,
-            "stack": self.stack,
-            "min_raise": game_state['min_raise']
-        })
-        
+        # 1. Page the Controller to format the screen and show buttons!
+        if self.trigger_ui_update:
+            self.trigger_ui_update("waiting_for_user")
+            
         print("Engine paused. Waiting for Web UI input...")
         
         # 2. Pause the game thread until the Web UI drops a message in the mailbox
         ui_action = action_queue.get(block=True)
         
-        # 3. Process the action that came from the browser
+        # 3. Process the math (keep your existing raise/call/fold validation here)
         action_type = ui_action['action']
         
         if action_type == 'fold':
@@ -148,14 +140,21 @@ class HumanPlayer(Player):
             return "fold", 0
             
         elif action_type == 'call':
+            to_call = game_state['current_bet'] - self.current_bet
             amount = min(to_call, self.stack)
             self.bet(amount)
             return "call", amount
             
         elif action_type == 'raise':
-            # The browser will send the total amount in the message
-            total_target = ui_action['amount']
-            amount_to_add = total_target - self.current_bet
+            requested_total = ui_action.get('amount', 0)
+            min_legal_total = game_state['current_bet'] + game_state['min_raise']
+            
+            actual_total = max(requested_total, min_legal_total)
+            amount_to_add = actual_total - self.current_bet
+            
+            if amount_to_add > self.stack:
+                amount_to_add = self.stack
+                
             self.bet(amount_to_add)
             return "raise", amount_to_add
 

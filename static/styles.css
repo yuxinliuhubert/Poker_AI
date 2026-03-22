@@ -1,0 +1,89 @@
+/* --- 1. CORE LAYOUT --- */
+body { 
+    font-family: Arial, sans-serif; 
+    background-color: #2b3e50; 
+    color: white; 
+    text-align: center; 
+    margin: 0; 
+    padding: 20px; 
+    height: 100vh; /* Forces the body to be exactly the height of your screen */
+    display: flex; 
+    flex-direction: column; 
+    box-sizing: border-box; 
+}
+
+h1 { margin-top: 0; margin-bottom: 15px; color: #ecf0f1; }
+h2 { color: #18bc9c; margin: 5px 0; }
+h3 { color: #ecf0f1; margin-top: 0; }
+
+/* --- 2. CSS GRID DASHBOARD --- */
+.game-container { 
+    display: grid; 
+    grid-template-columns: 2fr 1fr; /* Left side is twice as wide as right side */
+    gap: 20px; 
+    flex-grow: 1; /* Fills remaining vertical space */
+    max-width: 1400px; 
+    margin: 0 auto; 
+    width: 100%; 
+}
+
+/* Left Column (Cards & Buttons) */
+.table-column { display: flex; flex-direction: column; gap: 15px; }
+.card-box { background: #34495e; padding: 15px; border-radius: 10px; width: 100%; box-sizing: border-box; }
+.controls-container { background: #2c3e50; padding: 15px; border-radius: 10px; min-height: 80px; display: flex; justify-content: center; align-items: center; border: 2px solid #34495e; }
+
+/* Right Column (Action Log) */
+.log-column { display: flex; flex-direction: column; }
+.log-box { background: #1a252f; text-align: left; font-family: monospace; border-radius: 10px; padding: 15px; display: flex; flex-direction: column; flex-grow: 1; box-sizing: border-box; }
+.log-list { list-style-type: none; padding-left: 0; font-size: 14px; color: #1abc9c; margin: 0; overflow-y: auto; flex-grow: 1; height: 100%; }
+.log-item { margin-bottom: 5px; border-bottom: 1px solid #2c3e50; padding-bottom: 3px; }
+
+/* --- 3. BUTTONS & INPUTS --- */
+.btn { padding: 10px 20px; margin: 5px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
+.btn-fold { background: #e74c3c; color: white; }
+.btn-call { background: #f39c12; color: white; }
+.btn-raise { background: #3498db; color: white; }
+.btn-next { background: #2ecc71; color: white; display: none; }
+input[type="number"] { padding: 10px; font-size: 16px; width: 100px; border-radius: 5px; border: none; text-align: center; margin-right: 5px; }
+
+/* --- 4. PLAYING CARDS --- */
+.cards-container { display: flex; justify-content: center; gap: 10px; margin: 10px 0; min-height: 110px; }
+.playing-card {
+    background-color: white;
+    border-radius: 8px;
+    width: 75px;
+    height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    font-weight: bold;
+    position: relative;
+    box-sizing: border-box;
+}
+.card-red { color: #e74c3c; }
+.card-black { color: #2c3e50; }
+.card-top { align-self: flex-start; text-align: center; line-height: 1; }
+.card-bottom { align-self: flex-end; transform: rotate(180deg); text-align: center; line-height: 1; }
+.card-middle { font-size: 42px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+
+/* --- 6. SCROLLABLE ACTION LOG --- */
+#log-container {
+    height: 580px; /* Lock the height of the box */
+    display: flex;
+    flex-direction: column;
+}
+
+#game-log {
+    overflow-y: auto; /* THIS IS THE MAGIC SCROLLBAR! */
+    flex-grow: 1;
+    margin: 0;
+    padding-right: 10px; /* Keep text from rubbing against the bar */
+}
+
+/* Custom Dark Mode Scrollbar */
+#game-log::-webkit-scrollbar { width: 8px; }
+#game-log::-webkit-scrollbar-track { background: #2c3e50; border-radius: 4px; }
+#game-log::-webkit-scrollbar-thumb { background: #f39c12; border-radius: 4px; }

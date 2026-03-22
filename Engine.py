@@ -61,9 +61,10 @@ class TexasHoldem:
         self.community_cards = []
         self.deck = Deck() # Shuffle
         
-        # CLEAR history for the new hand (or keep appending if you want a full game log)
-        # Usually, we want a "Hand History", so we clear it here.
-        self.history = [] 
+
+        
+        # 2. Move Dealer Button FIRST so the log is accurate
+        self.dealer_pos = (self.dealer_pos + 1) % len(self.players)
         
         # Log the setup
         self.history.append({
@@ -72,14 +73,17 @@ class TexasHoldem:
             "dealer": self.players[self.dealer_pos].name,
             "active_players": [p.name for p in self.players if p.stack > 0]
         })
-
-        self.dealer_pos = (self.dealer_pos + 1) % len(self.players)
         
-        # 2. Determine Blinds based on Dealer Position
-        # SB is 1 seat left of Dealer, BB is 2 seats left
+        # 3. Determine Blinds (Fixing the Heads-Up Poker Rules!)
         n = len(self.players)
-        sb_pos = (self.dealer_pos + 1) % n
-        bb_pos = (self.dealer_pos + 2) % n
+        if n == 2:
+            # In Heads-Up, the Dealer IS the Small Blind
+            sb_pos = self.dealer_pos
+            bb_pos = (self.dealer_pos + 1) % 2
+        else:
+            # Standard 3+ Player rules
+            sb_pos = (self.dealer_pos + 1) % n
+            bb_pos = (self.dealer_pos + 2) % n
         
         sb_player = self.players[sb_pos]
         bb_player = self.players[bb_pos]
@@ -90,7 +94,7 @@ class TexasHoldem:
         bb_amount = bb_player.bet(self.big_blind)
         
         self.pot += (sb_amount + bb_amount)
-        self.current_bet = self.big_blind # The table's highest bet to call
+        self.current_bet = self.big_blind 
         
         print(f"{sb_player.name} posts Small Blind: ${sb_amount}")
         print(f"{bb_player.name} posts Big Blind: ${bb_amount}")
@@ -99,10 +103,9 @@ class TexasHoldem:
 
         # 4. Deal Hole Cards
         for player in self.players:
-            if player.stack > 0: # Only deal to players who have chips
-                cards = self.deck.deal(2) # Assuming your Deck class has a deal() method
+            if player.stack > 0: 
+                cards = self.deck.deal(2) 
                 player.receive_cards(cards)
-
                 self.history.append({
                         "action": "hole_cards",
                         "player": player.name,
@@ -112,100 +115,100 @@ class TexasHoldem:
         print("Cards dealt.")
 
         # 5. Return the index of the first player to act
-        # Pre-flop, the action starts with the player to the left of the Big Blind (Under the Gun)
         utg_pos = (bb_pos + 1) % n
         return utg_pos
     
 
     def play_betting_round(self, start_pos):
-            """
-            Executes a single round of betting (Pre-flop, Flop, Turn, or River).
-            """
-            # If everyone folded or went all-in on a previous street, skip betting
-            players_can_act = [p for p in self.players if p.status == 'active']
-            if len(players_can_act) == 0:
+        """
+        Executes a single round of betting (Pre-flop, Flop, Turn, or River).
+        """
+        # If everyone folded or went all-in on a previous street, skip betting
+        players_can_act = [p for p in self.players if p.status == 'active']
+        if len(players_can_act) == 0:
+            return
+        
+        # If only 1 player can act and they've already matched the bet, skip
+        if len(players_can_act) == 1:
+            active_players = [p for p in self.players if p.status in ['active', 'allin']]
+            # If they are facing an all-in they need to call, we still run the loop.
+            # Otherwise, if no one else can act, the round is over.
+            if len(active_players) == 1 or players_can_act[0].current_bet == self.current_bet:
                 return
+
+        current_pos = start_pos
+        players_acted = 0
+        
+        print("\n--- Betting Round Starts ---")
+
+        # The round continues until every active player has had a chance to act 
+        # WITHOUT the bet being raised.
+        while players_acted < len(players_can_act):
+            player = self.players[current_pos]
             
-            # If only 1 player can act and they've already matched the bet, skip
-            if len(players_can_act) == 1:
-                active_players = [p for p in self.players if p.status in ['active', 'allin']]
-                # If they are facing an all-in they need to call, we still run the loop.
-                # Otherwise, if no one else can act, the round is over.
-                if len(active_players) == 1 or players_can_act[0].current_bet == self.current_bet:
-                    return
-
-            current_pos = start_pos
-            players_acted = 0
-            
-            print("\n--- Betting Round Starts ---")
-
-            # The round continues until every active player has had a chance to act 
-            # WITHOUT the bet being raised.
-            while players_acted < len(players_can_act):
-                player = self.players[current_pos]
-                
-                # Skip players who already folded or pushed all-in
-                if player.status != 'active':
-                    current_pos = (current_pos + 1) % len(self.players)
-                    continue
-
-                # 1. Build the state dictionary to feed the Player's get_action() method
-                game_state = {
-                    'community_cards': self.community_cards,
-                    'current_bet': self.current_bet,
-                    'pot': self.pot,
-                    'min_raise': self.big_blind, # Keeping minimum raise simple for now
-                    'active_players': len([p for p in self.players if p.status in ['active', 'allin']])
-                }
-
-                # 2. Ask the player for their move
-                action, amount_added = player.get_action(game_state)
-
-                if hasattr(player, 'last_thought') and player.last_thought:
-                    self.history.append({
-                        "action": "bot_thought", 
-                        "thought": player.last_thought
-                    })
-                
-                # 3. Process the move
-                if action == 'fold':
-                    print(f"{player.name} folds.")
-                    self.history.append({"player": player.name, "action": "fold"})
-                    # We recalculate who can act since someone just dropped out
-                    players_can_act = [p for p in self.players if p.status == 'active']
-                    
-                elif action in ['call', 'check']:
-                    verb = "checks" if amount_added == 0 else f"calls ${amount_added}"
-                    print(f"{player.name} {verb}.")
-                    self.pot += amount_added
-                    self.history.append({"player": player.name, "action": action, "amount": amount_added})
-                    players_acted += 1
-                    
-                elif action == 'raise':
-                    print(f"{player.name} raises to ${player.current_bet}.")
-                    self.pot += amount_added
-                    self.current_bet = player.current_bet 
-                    self.history.append({"player": player.name, "action": "raise", "amount": amount_added})
-                    
-                    # --- THE CRUCIAL PART ---
-                    # A raise re-opens the action. Everyone else now has to respond 
-                    # to this new bet, so we reset the "players_acted" counter to 1 (this player).
-                    players_acted = 1 
-
-                # 4. Check for early termination (everyone else folded)
-                active_and_allin = [p for p in self.players if p.status in ['active', 'allin']]
-                if len(active_and_allin) == 1:
-                    print(f"\nEveryone folded. {active_and_allin[0].name} wins the pot of ${self.pot}!")
-                    break 
-
-                # Move to the next seat
+            # Skip players who already folded or pushed all-in
+            if player.status != 'active':
                 current_pos = (current_pos + 1) % len(self.players)
+                continue
+
+            # 1. Build the state dictionary to feed the Player's get_action() method
+            game_state = {
+                'community_cards': self.community_cards,
+                'current_bet': self.current_bet,
+                'pot': self.pot,
+                'min_raise': self.big_blind, # Keeping minimum raise simple for now
+                'active_players': len([p for p in self.players if p.status in ['active', 'allin']]),
+                'history': self.history
+            }
+
+            # 2. Ask the player for their move
+            action, amount_added = player.get_action(game_state)
+
+            if hasattr(player, 'last_thought') and player.last_thought:
+                self.history.append({
+                    "action": "bot_thought", 
+                    "thought": player.last_thought
+                })
+            
+            # 3. Process the move
+            if action == 'fold':
+                print(f"{player.name} folds.")
+                self.history.append({"player": player.name, "action": "fold"})
+                # We recalculate who can act since someone just dropped out
+                players_can_act = [p for p in self.players if p.status == 'active']
                 
-            # 5. Clean up at the end of the round
-            # Reset everyone's current_bet tracker to 0 for the next street
-            for p in self.players:
-                p.reset_round()
-            self.current_bet = 0
+            elif action in ['call', 'check']:
+                verb = "checks" if amount_added == 0 else f"calls ${amount_added}"
+                print(f"{player.name} {verb}.")
+                self.pot += amount_added
+                self.history.append({"player": player.name, "action": action, "amount": amount_added})
+                players_acted += 1
+                
+            elif action == 'raise':
+                print(f"{player.name} raises to ${player.current_bet}.")
+                self.pot += amount_added
+                self.current_bet = player.current_bet 
+                self.history.append({"player": player.name, "action": "raise", "amount": amount_added})
+                
+                # --- THE CRUCIAL PART ---
+                # A raise re-opens the action. Everyone else now has to respond 
+                # to this new bet, so we reset the "players_acted" counter to 1 (this player).
+                players_acted = 1 
+
+            # 4. Check for early termination (everyone else folded)
+            active_and_allin = [p for p in self.players if p.status in ['active', 'allin']]
+            if len(active_and_allin) == 1:
+                print(f"\nEveryone folded. {active_and_allin[0].name} wins the pot of ${self.pot}!")
+                break 
+
+            # Move to the next seat
+            current_pos = (current_pos + 1) % len(self.players)
+            
+        # 5. Clean up at the end of the round
+        # Reset everyone's current_bet tracker to 0 for the next street
+        for p in self.players:
+            p.reset_round()
+        self.current_bet = 0
 
     def deal_community_cards(self, num_cards):
             """

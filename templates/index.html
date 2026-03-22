@@ -2,64 +2,117 @@
 <html>
 <head>
     <title>Poker AI Engine</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #2b3e50; color: white; text-align: center; padding: 50px; }
-        .card-box { background: #34495e; padding: 20px; border-radius: 10px; margin: 20px auto; width: 60%; }
-        h2 { color: #18bc9c; }
-        .btn { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; }
-        .btn-fold { background: #e74c3c; color: white; }
-        .btn-call { background: #f39c12; color: white; }
-        .btn-raise { background: #3498db; color: white; }
-        input[type="number"] { padding: 10px; font-size: 16px; width: 100px; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v=4">
 </head>
 <body>
 
-    <h1>Texas Hold'em vs MathBot</h1>
+    <h1>Texas Hold'em Simulation</h1>
     
-    <div class="card-box" id="board-box">
-        <h3>Community Cards</h3>
-        <h2 id="board">[]</h2>
-        <p>Pot: $<span id="pot">0</span></p>
-    </div>
+    <div class="game-container">
+        
+        <div class="table-column">
+            <div class="card-box" id="board-box">
+                <h3>Community Cards</h3>
+                <div id="board" class="cards-container"></div>
+                <p>Pot: $<span id="pot">0</span></p>
+            </div>
 
-    <div class="card-box" id="player-box">
-        <h3>Your Hand</h3>
-        <h2 id="hand">[]</h2>
-        <p>Your Stack: $<span id="stack">0</span> | To Call: $<span id="tocall">0</span></p>
-    </div>
+            <div class="card-box" id="player-box">
+                <h3>Your Hand</h3>
+                <div id="hand" class="cards-container"></div>
+                <p style="margin-bottom: 5px;">Your Stack: $<span id="stack">0</span></p>
+                
+                <div style="background: #1a252f; padding: 10px; margin-bottom: 15px; border-radius: 5px; text-align: left; border-left: 4px solid #3498db;">
+                    <h4 style="margin: 0 0 5px 0; color: #bdc3c7;">Current Round Bets</h4>
+                    <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                        <span>MathBot's Bet: $<span id="bot-bet-display">0</span></span>
+                        <span>Your Bet: $<span id="human-bet-display">0</span></span>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 8px 0;">
+                    <p style="margin: 0; color: #f39c12; font-weight: bold; text-align: center;">Amount to Call: $<span id="tocall">0</span></p>
+                </div>
+            </div>
 
-    <div id="controls" style="display: none;">
-        <button class="btn btn-fold" onclick="sendAction('fold')">Fold</button>
-        <button class="btn btn-call" onclick="sendAction('call')">Call / Check</button>
-        <br><br>
-        <input type="number" id="raise-amount" placeholder="Total Bet">
-        <button class="btn btn-raise" onclick="sendRaise()">Raise To</button>
-    </div>
+            <div class="controls-container">
+                <div id="controls" style="display: none;">
+                    <button class="btn btn-fold" onclick="sendAction('fold')">Fold</button>
+                    <button class="btn btn-call" onclick="sendAction('call')">Call / Check</button>
+                    <br><br>
+                    
+                    <input type="number" id="raise-amount" placeholder="Raise Add'l" oninput="updateRaiseMath()">
+                    <button class="btn btn-raise" onclick="sendRaise()">Execute Raise</button>
+                    
+                    <div id="raise-math-display" style="margin-top: 10px; font-size: 14px; font-weight: bold; height: 20px;"></div>
+                </div>
+                
+                <button id="next-hand-btn" class="btn btn-next" onclick="sendAction('next_hand')" style="display: none;">Deal Next Hand</button>
+                <h3 id="waiting-msg" style="margin:0;">Waiting for MathBot...</h3>
+            </div>
+        </div>
 
-    <h3 id="waiting-msg">Waiting for engine...</h3>
+        <div class="log-column">
+            <div class="log-box" id="log-container">
+                <h3 style="color: #f39c12; margin-top: 0; border-bottom: 1px solid #f39c12; padding-bottom: 10px;">Table Action Log</h3>
+                <ul id="game-log" class="log-list"></ul>
+            </div>
+        </div>
+
+    </div>
 
     <script>
-        // Check the server every 1 second to see what's happening
         setInterval(fetchState, 1000);
+
+        // These MUST be active for the live math to work!
+        let currentToCall = 0;
+        let currentHighestBet = 0;
+        let currentMinRaise = 0;
+        let currentHumanBet = 0;
 
         function fetchState() {
             fetch('/get_state')
                 .then(response => response.json())
                 .then(data => {
+                    let logElement = document.getElementById('game-log');
+                    if (data.log && logElement) {
+                        let logHTML = "";
+                        data.log.forEach(msg => { logHTML += `<li class="log-item">> ${msg}</li>`; });
+                        
+                        let shouldScroll = logElement.innerHTML !== logHTML;
+                        logElement.innerHTML = logHTML;
+                        if (shouldScroll) logElement.scrollTop = logElement.scrollHeight;
+                    }
+
                     if (data.status === "waiting_for_user") {
-                        document.getElementById('board').innerText = data.board.join("  ");
-                        document.getElementById('hand').innerText = data.hand.join("  ");
+                        renderCards(data.board, 'board');
+                        renderCards(data.hand, 'hand');
+                        
                         document.getElementById('pot').innerText = data.pot;
                         document.getElementById('stack').innerText = data.stack;
-                        document.getElementById('tocall').innerText = data.to_call;
                         
-                        document.getElementById('raise-amount').min = data.pot + data.min_raise;
+                        currentToCall = data.to_call;
+                        currentHighestBet = data.highest_bet;
+                        currentMinRaise = data.min_raise;
+                        currentHumanBet = data.human_bet;
+                        
+                        document.getElementById('tocall').innerText = currentToCall;
+                        document.getElementById('human-bet-display').innerText = currentHumanBet;
+                        document.getElementById('bot-bet-display').innerText = currentHighestBet;
+                        
+                        document.getElementById('raise-amount').placeholder = `+ Add'l (Min: $${currentMinRaise})`;
                         
                         document.getElementById('controls').style.display = "block";
+                        document.getElementById('next-hand-btn').style.display = "none";
                         document.getElementById('waiting-msg').style.display = "none";
+                        
+                    } else if (data.status === "hand_over") {
+                        // THIS WAS MISSING! It tells the button to show up!
+                        document.getElementById('controls').style.display = "none";
+                        document.getElementById('next-hand-btn').style.display = "inline-block";
+                        document.getElementById('waiting-msg').style.display = "none";
+                        
                     } else {
                         document.getElementById('controls').style.display = "none";
+                        document.getElementById('next-hand-btn').style.display = "none";
                         document.getElementById('waiting-msg').style.display = "block";
                     }
                 });
@@ -67,6 +120,9 @@
 
         function sendAction(actionType) {
             document.getElementById('controls').style.display = "none";
+            document.getElementById('next-hand-btn').style.display = "none";
+            document.getElementById('waiting-msg').style.display = "block";
+            
             fetch('/send_action', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -75,15 +131,88 @@
         }
 
         function sendRaise() {
-            let amount = parseInt(document.getElementById('raise-amount').value);
-            if (isNaN(amount)) { alert("Enter a valid number!"); return; }
+            let raiseAdd = parseInt(document.getElementById('raise-amount').value);
             
+            if (isNaN(raiseAdd) || raiseAdd < currentMinRaise) { 
+                alert(`Illegal Bet! You must raise by at least $${currentMinRaise}`); 
+                return; 
+            }
+            
+            let totalTargetBet = currentHighestBet + raiseAdd;
+
+            document.getElementById('raise-amount').value = "";
+            document.getElementById('raise-math-display').innerHTML = "";
+
             document.getElementById('controls').style.display = "none";
+            document.getElementById('waiting-msg').style.display = "block";
+            
             fetch('/send_action', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'raise', amount: amount })
+                body: JSON.stringify({ action: 'raise', amount: totalTargetBet })
             });
+        }
+
+        function renderCards(cardArray, elementId) {
+            const container = document.getElementById(elementId);
+            if (!container) return; 
+            
+            container.innerHTML = ''; 
+
+            if (!cardArray || cardArray.length === 0) {
+                container.innerHTML = '<div style="color: #7f8c8d; margin-top: 40px;">[ No Cards ]</div>';
+                return;
+            }
+
+            const suitSymbols = { 's': '♠', 'h': '♥', 'd': '♦', 'c': '♣' };
+            const suitColors = { 's': 'card-black', 'h': 'card-red', 'd': 'card-red', 'c': 'card-black' };
+
+            cardArray.forEach(cardStr => {
+                let rank = cardStr.charAt(0);
+                let suit = cardStr.charAt(1).toLowerCase();
+                if (rank === 'T') rank = '10'; 
+                
+                let symbol = suitSymbols[suit] || suit;
+                let colorClass = suitColors[suit] || 'card-black';
+
+                container.innerHTML += `
+                    <div class="playing-card ${colorClass}">
+                        <div class="card-top" style="font-size: 18px;">${rank}<br><span style="font-size: 12px;">${symbol}</span></div>
+                        <div class="card-middle">${symbol}</div>
+                        <div class="card-bottom" style="font-size: 18px;">${rank}<br><span style="font-size: 12px;">${symbol}</span></div>
+                    </div>
+                `;
+            });
+        }
+
+        function updateRaiseMath() {
+            let raiseAdd = parseInt(document.getElementById('raise-amount').value);
+            let displayDiv = document.getElementById('raise-math-display');
+
+            if (isNaN(raiseAdd) || raiseAdd <= 0) {
+                displayDiv.innerHTML = "";
+                return;
+            }
+
+            let totalTargetBet = currentHighestBet + raiseAdd;
+            let chipsLeavingStack = currentToCall + raiseAdd;
+
+            let html = `<div style="color: #2ecc71; line-height: 1.4;">`;
+            html += `Action: $${currentToCall} (Call) + $${raiseAdd} (Raise) = <strong>Pushing $${chipsLeavingStack}</strong><br>`;
+            
+            if (currentHumanBet > 0) {
+                html += `Total Bet: $${currentHumanBet} (Previous) + $${chipsLeavingStack} (New) = <strong>$${totalTargetBet}</strong>`;
+            } else {
+                html += `Total Bet: <strong>$${totalTargetBet}</strong>`;
+            }
+            
+            html += `</div>`;
+
+            if (raiseAdd < currentMinRaise) {
+                html += `<div style="color: #e74c3c; margin-top: 4px;">⚠️ Raise must be at least $${currentMinRaise}</div>`;
+            }
+
+            displayDiv.innerHTML = html;
         }
     </script>
 </body>
