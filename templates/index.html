@@ -68,18 +68,32 @@
         let currentMinRaise = 0;
         let currentHumanBet = 0;
 
+        let lastLogLength = 0;
         function fetchState() {
             fetch('/get_state')
                 .then(response => response.json())
                 .then(data => {
                     let logElement = document.getElementById('game-log');
                     if (data.log && logElement) {
-                        let logHTML = "";
-                        data.log.forEach(msg => { logHTML += `<li class="log-item">> ${msg}</li>`; });
-                        
-                        let shouldScroll = logElement.innerHTML !== logHTML;
-                        logElement.innerHTML = logHTML;
-                        if (shouldScroll) logElement.scrollTop = logElement.scrollHeight;
+                        // ONLY rebuild the HTML if the server sent new lines
+                        if (data.log.length !== lastLogLength) {
+                            
+                            // 1. Check if the user is currently at the bottom of the box
+                            let isAtBottom = logElement.scrollHeight - logElement.clientHeight <= logElement.scrollTop + 50;
+                            
+                            // 2. Build and inject the new HTML
+                            let logHTML = "";
+                            data.log.forEach(msg => { logHTML += `<li class="log-item">> ${msg}</li>`; });
+                            logElement.innerHTML = logHTML;
+                            
+                            // 3. Only auto-scroll if they were already at the bottom (or it's the first load)
+                            if (isAtBottom || lastLogLength === 0) {
+                                logElement.scrollTop = logElement.scrollHeight;
+                            }
+                            
+                            // 4. Update the tracker
+                            lastLogLength = data.log.length;
+                        }
                     }
 
                     if (data.status === "waiting_for_user") {

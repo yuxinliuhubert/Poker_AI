@@ -1,0 +1,203 @@
+Poker Engine Session Started: 2026-03-21 21:16:04
+
+========================================
+HAND LOG
+========================================
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Ac', '4c']
+Dealt to MathBot: ['As', '3c']
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 55.2% | Diff: 30.2% | # of sim: 1500 | win: 0.5373333333333333 | tie: 0.029333333333333333 | loss: 0.43333333333333335
+MathBot raiseed for $30.
+Hubert folded.
+WINNER: MathBot won $60 (Everyone folded).
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Ac', '2h']
+Dealt to MathBot: ['2d', 'Qd']
+Hubert folded.
+WINNER: MathBot won $30 (Everyone folded).
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['8c', 'Ah']
+Dealt to MathBot: ['Kc', '3s']
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 49.6% | Diff: 24.6% | # of sim: 1000 | win: 0.476 | tie: 0.041 | loss: 0.483
+MathBot raiseed for $50.
+Hubert folded.
+WINNER: MathBot won $80 (Everyone folded).
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Kd', '9d']
+Dealt to MathBot: ['Tc', '5s']
+Hubert folded.
+WINNER: MathBot won $30 (Everyone folded).
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['8s', 'Qh']
+Dealt to MathBot: ['3h', '5c']
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 35.1% | Diff: 10.1% | # of sim: 1500 | win: 0.31733333333333336 | tie: 0.06666666666666667 | loss: 0.616
+MathBot called for $10.
+Hubert folded.
+WINNER: MathBot won $40 (Everyone folded).
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Qd', '4s']
+Dealt to MathBot: ['Ks', 'Th']
+Hubert folded.
+WINNER: MathBot won $30 (Everyone folded).
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['6c', 'Ts']
+Dealt to MathBot: ['Kh', 'Qh']
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 63.4% | Diff: 38.4% | # of sim: 1000 | win: 0.623 | tie: 0.023 | loss: 0.354
+MathBot raiseed for $30.
+Hubert called for $20.
+Board Updated: ['6h', 'Kd', 'Ks']
+Hubert raiseed for $50.
+  -> [MathBot Math] Pot Odds: 27.8% | Win Equity: 97.0% | Diff: 69.2% | # of sim: 1000 | win: 0.966 | tie: 0.007 | loss: 0.027
+MathBot raiseed for $90.
+Hubert called for $40.
+Board Updated: ['Ah']
+Hubert called for $0.
+  -> [MathBot Math] Pot Odds: 0.0% | Win Equity: 97.5% | Diff: 97.5% | # of sim: 1000 | win: 0.969 | tie: 0.011 | loss: 0.02
+MathBot raiseed for $60.
+Hubert called for $60.
+Board Updated: ['4h']
+Hubert called for $0.
+  -> [MathBot Math] Pot Odds: 0.0% | Win Equity: 97.7% | Diff: 97.7% | # of sim: 1500 | win: 0.9766666666666667 | tie: 0.0 | loss: 0.023333333333333334
+MathBot raiseed for $60.
+Hubert called for $60.
+Hubert shows: ['6c', 'Ts'] (Two Pair)
+MathBot shows: ['Kh', 'Qh'] (Flush)
+WINNER: MathBot won $500.0 at Showdown.
+--------------------
+
+========================================
+HAND LOG
+========================================
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Ac', '4c']
+Dealt to MathBot: ['As', '3c']
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 55.2% | Diff: 30.2% | # of sim: 1500 | win: 0.5373333333333333 | tie: 0.029333333333333333 | loss: 0.43333333333333335
+MathBot raiseed for $30.
+Hubert folded.
+WINNER: MathBot won $60 (Everyone folded).
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Ac', '2h']
+Dealt to MathBot: ['2d', 'Qd']
+Hubert folded.
+WINNER: MathBot won $30 (Everyone folded).
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['8c', 'Ah']
+Dealt to MathBot: ['Kc', '3s']
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 49.6% | Diff: 24.6% | # of sim: 1000 | win: 0.476 | tie: 0.041 | loss: 0.483
+MathBot raiseed for $50.
+Hubert folded.
+WINNER: MathBot won $80 (Everyone folded).
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Kd', '9d']
+Dealt to MathBot: ['Tc', '5s']
+Hubert folded.
+WINNER: MathBot won $30 (Everyone folded).
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['8s', 'Qh']
+Dealt to MathBot: ['3h', '5c']
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 35.1% | Diff: 10.1% | # of sim: 1500 | win: 0.31733333333333336 | tie: 0.06666666666666667 | loss: 0.616
+MathBot called for $10.
+Hubert folded.
+WINNER: MathBot won $40 (Everyone folded).
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Qd', '4s']
+Dealt to MathBot: ['Ks', 'Th']
+Hubert folded.
+WINNER: MathBot won $30 (Everyone folded).
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['6c', 'Ts']
+Dealt to MathBot: ['Kh', 'Qh']
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 63.4% | Diff: 38.4% | # of sim: 1000 | win: 0.623 | tie: 0.023 | loss: 0.354
+MathBot raiseed for $30.
+Hubert called for $20.
+Board Updated: ['6h', 'Kd', 'Ks']
+Hubert raiseed for $50.
+  -> [MathBot Math] Pot Odds: 27.8% | Win Equity: 97.0% | Diff: 69.2% | # of sim: 1000 | win: 0.966 | tie: 0.007 | loss: 0.027
+MathBot raiseed for $90.
+Hubert called for $40.
+Board Updated: ['Ah']
+Hubert called for $0.
+  -> [MathBot Math] Pot Odds: 0.0% | Win Equity: 97.5% | Diff: 97.5% | # of sim: 1000 | win: 0.969 | tie: 0.011 | loss: 0.02
+MathBot raiseed for $60.
+Hubert called for $60.
+Board Updated: ['4h']
+Hubert called for $0.
+  -> [MathBot Math] Pot Odds: 0.0% | Win Equity: 97.7% | Diff: 97.7% | # of sim: 1500 | win: 0.9766666666666667 | tie: 0.0 | loss: 0.023333333333333334
+MathBot raiseed for $60.
+Hubert called for $60.
+Hubert shows: ['6c', 'Ts'] (Two Pair)
+MathBot shows: ['Kh', 'Qh'] (Flush)
+WINNER: MathBot won $500.0 at Showdown.
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Td', 'Th']
+Dealt to MathBot: ['4d', '8s']
+Hubert raiseed for $30.
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 38.2% | Diff: 13.2% | # of sim: 1000 | win: 0.357 | tie: 0.05 | loss: 0.593
+MathBot called for $20.
+Board Updated: ['Ks', '2c', 'Qs']
+  -> [MathBot Math] Pot Odds: 0.0% | Win Equity: 26.4% | Diff: 26.4% | # of sim: 1000 | win: 0.24 | tie: 0.047 | loss: 0.713
+MathBot checked for $0.
+Hubert called for $0.
+Board Updated: ['5d']
+  -> [MathBot Math] Pot Odds: 0.0% | Win Equity: 14.0% | Diff: 14.0% | # of sim: 2000 | win: 0.132 | tie: 0.0165 | loss: 0.8515
+MathBot checked for $0.
+Hubert raiseed for $50.
+  -> [MathBot Math] Pot Odds: 27.8% | Win Equity: 13.7% | Diff: -14.1% | # of sim: 1500 | win: 0.12666666666666668 | tie: 0.02 | loss: 0.8533333333333334
+MathBot folded.
+WINNER: Hubert won $130 (Everyone folded).
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['Th', 'Td']
+Dealt to MathBot: ['6h', '2c']
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 34.2% | Diff: 9.2% | # of sim: 3000 | win: 0.315 | tie: 0.05466666666666667 | loss: 0.6303333333333333
+MathBot called for $10.
+Hubert raiseed for $50.
+  -> [MathBot Math] Pot Odds: 35.7% | Win Equity: 35.0% | Diff: -0.8% | # of sim: 2500 | win: 0.3228 | tie: 0.0536 | loss: 0.6236
+MathBot folded.
+WINNER: Hubert won $90 (Everyone folded).
+New Hand Started. Dealer: Hubert
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['4h', '3c']
+Dealt to MathBot: ['Kc', 'Js']
+Hubert folded.
+WINNER: MathBot won $30 (Everyone folded).
+New Hand Started. Dealer: MathBot
+Blinds Posted: SB $10, BB $20
+Dealt to Hubert: ['7h', 'Tc']
+Dealt to MathBot: ['2d', '6h']
+  -> [MathBot Math] Pot Odds: 25.0% | Win Equity: 35.4% | Diff: 10.4% | # of sim: 2500 | win: 0.3252 | tie: 0.0584 | loss: 0.6164
+MathBot called for $10.
+Hubert called for $0.
+Board Updated: ['6s', '9h', 'Th']
+Hubert raiseed for $50.
+  -> [MathBot Math] Pot Odds: 35.7% | Win Equity: 53.9% | Diff: 18.2% | # of sim: 1000 | win: 0.516 | tie: 0.046 | loss: 0.438
+MathBot called for $50.
+Board Updated: ['5d']
+Hubert raiseed for $60.
+  -> [MathBot Math] Pot Odds: 23.1% | Win Equity: 55.5% | Diff: 32.5% | # of sim: 1500 | win: 0.5446666666666666 | tie: 0.021333333333333333 | loss: 0.434
+MathBot raiseed for $120.
+Hubert called for $60.
+Board Updated: ['Ad']
+Hubert called for $0.
+  -> [MathBot Math] Pot Odds: 0.0% | Win Equity: 53.2% | Diff: 53.2% | # of sim: 2000 | win: 0.5105 | tie: 0.0435 | loss: 0.446
+MathBot raiseed for $60.
+Hubert called for $60.
+Hubert shows: ['7h', 'Tc'] (Pair)
+MathBot shows: ['2d', '6h'] (Pair)
+WINNER: Hubert won $500.0 at Showdown.
+--------------------
